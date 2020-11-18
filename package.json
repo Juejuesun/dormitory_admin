@@ -13,7 +13,7 @@
     "use:taobao": "nrm use taobao"
   },
   "dependencies": {
-    "ant-design-vue": "2.0.0-beta.15",
+    "ant-design-vue": "^2.0.0-beta.15",
     "antd-iconfont": "^3.0.3",
     "axios": "^0.21.0",
     "clipboard": "^2.0.6",

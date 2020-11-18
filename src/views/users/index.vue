@@ -1,67 +1,126 @@
 <template>
   <a-table :columns="columns" :data-source="data" bordered>
-    <template slot="name" slot-scope="text">
-      <a>{{ text }}</a>
+    <template v-for="col in ['name', 'gender', 'num']" #[col]="{ text, record, index }" :key="col">
+      <div :key="index">  
+        <a-input
+          v-if="record.editable"
+          style="margin: -5px 0"
+          :value="text"
+          @change="e => handleChange(e.target.value, record.key, col)"
+        />
+        <template v-else>
+          {{ text }}
+        </template>
+      </div>
     </template>
-    <template slot="title" slot-scope="currentPageData">
-      Header
-    </template>
-    <template slot="footer" slot-scope="currentPageData">
-      Footer
+    <template #operation="{ text, record, index }">
+      <div class="editable-row-operations">
+        <span v-if="record.editable">
+          <a @click="save(record.key)">Save</a>
+          <a-popconfirm title="Sure to cancel?" @confirm="cancel(record.key)">
+            <a>Cancel</a>
+          </a-popconfirm>
+        </span>
+        <span v-else>
+          <a v-bind="editingKey !== '' ? { disabled: 'disabled' } : {}" @click="edit(record.key)">
+            Edit
+          </a>
+        </span>
+      </div>
     </template>
   </a-table>
 </template>
 <script>
 const columns = [
   {
-    title: 'Name',
+    title: '昵称',
     dataIndex: 'name',
-    scopedSlots: { customRender: 'name' },
+    width: '25%',
+    slots: { customRender: 'name' },
   },
   {
-    title: 'Cash Assets',
-    className: 'column-money',
-    dataIndex: 'money',
+    title: '性别',
+    dataIndex: 'gender',
+    width: '15%',
+    slots: { customRender: 'gender' },
   },
   {
-    title: 'Address',
-    dataIndex: 'address',
+    title: '学号',
+    dataIndex: 'num',
+    width: '40%',
+    slots: { customRender: 'num' },
+  },
+  {
+    title: 'operation',
+    dataIndex: 'operation',
+    slots: { customRender: 'operation' },
   },
 ];
 
-const data = [
-  {
-    key: '1',
-    name: 'John Brown',
-    money: '￥300,000.00',
-    address: 'New York No. 1 Lake Park',
-  },
-  {
-    key: '2',
-    name: 'Jim Green',
-    money: '￥1,256,000.00',
-    address: 'London No. 1 Lake Park',
-  },
-  {
-    key: '3',
-    name: 'Joe Black',
-    money: '￥120,000.00',
-    address: 'Sidney No. 1 Lake Park',
-  },
-];
-
+const data = [];
+for (let i = 0; i < 20; i++) {
+  data.push({
+    key: i.toString(),
+    name: `Edrward ${i}`,
+    gender: '女',
+    num: `Student no. ${i}`,
+  });
+}
 export default {
   data() {
+    this.cacheData = data.map(item => ({ ...item }));
     return {
       data,
       columns,
+      editingKey: '',
     };
+  },
+  methods: {
+    handleChange(value, key, column) {
+      const newData = [...this.data];
+      const target = newData.filter(item => key === item.key)[0];
+      if (target) {
+        target[column] = value;
+        this.data = newData;
+      }
+    },
+    edit(key) {
+      const newData = [...this.data];
+      const target = newData.filter(item => key === item.key)[0];
+      this.editingKey = key;
+      if (target) {
+        target.editable = true;
+        this.data = newData;
+      }
+    },
+    save(key) {
+      const newData = [...this.data];
+      const newCacheData = [...this.cacheData];
+      const target = newData.filter(item => key === item.key)[0];
+      const targetCache = newCacheData.filter(item => key === item.key)[0];
+      if (target && targetCache) {
+        delete target.editable;
+        this.data = newData;
+        Object.assign(targetCache, target);
+        this.cacheData = newCacheData;
+      }
+      this.editingKey = '';
+    },
+    cancel(key) {
+      const newData = [...this.data];
+      const target = newData.filter(item => key === item.key)[0];
+      this.editingKey = '';
+      if (target) {
+        Object.assign(target, this.cacheData.filter(item => key === item.key)[0]);
+        delete target.editable;
+        this.data = newData;
+      }
+    },
   },
 };
 </script>
-<style>
-th.column-money,
-td.column-money {
-  text-align: right !important;
+<style scoped>
+.editable-row-operations a {
+  margin-right: 8px;
 }
 </style>
