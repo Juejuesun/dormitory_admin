@@ -16,14 +16,14 @@
     <template #operation="{ text, record, index }">
       <div class="editable-row-operations">
         <span v-if="record.editable">
-          <a @click="save(record.key)">Save</a>
-          <a-popconfirm title="Sure to cancel?" @confirm="cancel(record.key)">
-            <a>Cancel</a>
+          <a @click="save(record.key)">保存</a>
+          <a-popconfirm title="确认放弃修改吗?" @confirm="cancel(record.key)">
+            <a>取消</a>
           </a-popconfirm>
         </span>
         <span v-else>
           <a v-bind="editingKey !== '' ? { disabled: 'disabled' } : {}" @click="edit(record.key)">
-            Edit
+            编辑
           </a>
         </span>
       </div>
@@ -51,7 +51,7 @@ const columns = [
     slots: { customRender: 'num' },
   },
   {
-    title: 'operation',
+    title: '操作',
     dataIndex: 'operation',
     slots: { customRender: 'operation' },
   },
