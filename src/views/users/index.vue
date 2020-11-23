@@ -1,36 +1,41 @@
 <template>
-  <a-table :columns="columns" :data-source="data" bordered>
-    <template v-for="col in ['name', 'gender', 'num']" #[col]="{ text, record, index }" :key="col">
-      <div :key="index">  
-        <a-input
-          v-if="record.editable"
-          style="margin: -5px 0"
-          :value="text"
-          @change="e => handleChange(e.target.value, record.key, col)"
-        />
-        <template v-else>
-          {{ text }}
-        </template>
-      </div>
-    </template>
-    <template #operation="{ text, record, index }">
-      <div class="editable-row-operations">
-        <span v-if="record.editable">
-          <a @click="save(record.key)">保存</a>
-          <a-popconfirm title="确认放弃修改吗?" @confirm="cancel(record.key)">
-            <a>取消</a>
-          </a-popconfirm>
-        </span>
-        <span v-else>
-          <a v-bind="editingKey !== '' ? { disabled: 'disabled' } : {}" @click="edit(record.key)">
-            编辑
-          </a>
-        </span>
-      </div>
-    </template>
-  </a-table>
+  <div>
+    <a-table :columns="columns" :data-source="data" bordered>
+      <template v-for="col in ['name', 'gender', 'num']" #[col]="{ text, record, index }" :key="col">
+        <div :key="index">  
+          <a-input
+            v-if="record.editable"
+            style="margin: -5px 0"
+            :value="text"
+            @change="e => handleChange(e.target.value, record.key, col)"
+          />
+          <template v-else>
+            {{ text }}
+          </template>
+        </div>
+      </template>
+      <template #operation="{ text, record, index }">
+        <div class="editable-row-operations">
+          <span v-if="record.editable">
+            <a @click="save(record.key)">保存</a>
+            <a-popconfirm title="确认放弃修改吗?" @confirm="cancel(record.key)">
+              <a>取消</a>
+            </a-popconfirm>
+          </span>
+          <span v-else>
+            <a v-bind="editingKey !== '' ? { disabled: 'disabled' } : {}" @click="edit(record.key)">
+              编辑
+            </a>
+          </span>
+        </div>
+      </template>
+    </a-table>
+    <a-button type="primary" @click="gettest()">test</a-button>
+  </div>
 </template>
 <script>
+import { getList2ns } from '@/api/table2ns'
+import { json } from 'body-parser';
 const columns = [
   {
     title: '昵称',
@@ -116,6 +121,12 @@ export default {
         this.data = newData;
       }
     },
+    async gettest() {
+      const { data } = await getList2ns()
+      console.log(data)
+      this.data = data.searchls
+      // this.data = JSON.stringify(JSON.parse(data.searchls))
+    }
   },
 };
 </script>

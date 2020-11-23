@@ -1,51 +1,57 @@
 <template>
   <div>
-    <a-alert message="树洞"></a-alert>
+    <a-alert message="树洞" type="info"/>
 
-    <a-card hoverable style="width: 240px">
-    <img
-      alt="example"
-      src="https://os.alipayobjects.com/rmsportal/QBnOOoLaAfKPirc.png"
-    />
-    <a-card-meta title="Europe Street beat">
-      <template v-slot:description>
-        www.instagram.com
-      </template>
-    </a-card-meta>
-  </a-card>
-
-    <a-card hoverable style="width: 300px">
-      <template #cover>
-        <img
-          alt="example"
-          src="https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png"
-        />
-      </template>
-      <template class="ant-card-actions" #actions>
-        <setting-outlined key="setting" />
-        <edit-outlined key="edit" />
-        <ellipsis-outlined key="ellipsis" />
-      </template>
-      <a-card-meta title="Card title" description="This is the description">
-        <template #avatar>
-          <a-avatar src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" />
-        </template>
-      </a-card-meta>
-  </a-card>
-  </div>  
+    <a-table :columns="columns" :data-source="data">
+    <template #action="{ text }">
+      <a>Delete</a>
+    </template>
+    <template #expandedRowRender="{ record }">
+      <p style="margin: 0">
+        {{ record.description }}
+      </p>
+    </template>
+  </a-table>
+  </div>
 </template>
-
 <script>
-import { SettingOutlined, EditOutlined, EllipsisOutlined } from '@ant-design/icons-vue';
-export default {
-  components: {
-    SettingOutlined,
-    EditOutlined,
-    EllipsisOutlined,
+const columns = [
+  { title: 'ID', dataIndex: 'name', key: 'name', ellipsis: true },
+  { title: 'Age', dataIndex: 'age', key: 'age' },
+  { title: 'Address', dataIndex: 'address', key: 'address' },
+  // { title: 'Action', dataIndex: '', key: 'x', slots: { customRender: 'action' } },
+];
+
+const data = [
+  {
+    key: 1,
+    name: 'John Brown',
+    age: 32,
+    address: 'New York No. 1 Lake Park',
+    description: 'My name is John Brown, I am 32 years old, living in New York No. 1 Lake Park.',
   },
-}
+  {
+    key: 2,
+    name: 'Jim Green',
+    age: 42,
+    address: 'London No. 1 Lake Park',
+    description: 'My name is Jim Green, I am 42 years old, living in London No. 1 Lake Park.',
+  },
+  {
+    key: 3,
+    name: 'Joe Black',
+    age: 32,
+    address: 'Sidney No. 1 Lake Park',
+    description: 'My name is Joe Black, I am 32 years old, living in Sidney No. 1 Lake Park.',
+  },
+];
+
+export default {
+  data() {
+    return {
+      data,
+      columns,
+    };
+  },
+};
 </script>
-
-<style>
-
-</style>

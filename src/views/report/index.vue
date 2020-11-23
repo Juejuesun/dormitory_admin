@@ -1,18 +1,15 @@
 <template>
   <div>
-    <a-table :columns="columns" :data-source="data">
-      <template #name="{ text }">
+    <a-table :columns="columns" :data-source="list">
+      <template #treeID="{ text }">
         <a>{{ text }}</a>
       </template>
-      <template #customTitle>
-        <span><smile-outlined /> Name</span>
-      </template>
-      <template #tags="{ text: tags }">
+      <template #tags="{ text: type }">
         <span>
           <a-tag
-            v-for="tag in tags"
+            v-for="tag in type"
             :key="tag"
-            :color="tag === 'loser' ? 'volcano' : tag.length > 5 ? 'geekblue' : 'green'"
+            :color="tag === '色情低俗 49' ? 'volcano' : tag.length > 5 ? 'geekblue' : 'green'"
           >
             {{ tag.toUpperCase() }}
           </a-tag>
@@ -22,34 +19,38 @@
         <a>通过</a>
       </template>
     </a-table>
+    <a-button type="primary" @click="gettest()">test</a-button>
   </div>
 </template>
 <script>
+import { getListrpo2 } from '@/api/table2ns'
 import { SmileOutlined, DownOutlined } from '@ant-design/icons-vue';
 const columns = [
   {
-    dataIndex: 'name',
-    key: 'name',
-    slots: { title: 'customTitle', customRender: 'name' },
+    title: "ID",
+    dataIndex: 'treeId',
+    key: 'treeId',
+    ellipsis: true,
+    slots: { customRender: 'treeID' },
   },
   {
-    title: 'Age',
-    dataIndex: 'age',
-    key: 'age',
+    title: '举报数',
+    dataIndex: 'rpotNum',
+    key: 'rpotNum',
   },
   {
-    title: 'Address',
-    dataIndex: 'address',
-    key: 'address',
+    title: '内容',
+    dataIndex: 'conText',
+    key: 'conText',
   },
   {
-    title: 'Tags',
-    key: 'tags',
-    dataIndex: 'tags',
+    title: '类型',
+    key: 'type',
+    dataIndex: 'type',
     slots: { customRender: 'tags' },
   },
   {
-    title: 'Action',
+    title: '操作',
     key: 'action',
     slots: { customRender: 'action' },
   },
@@ -88,7 +89,41 @@ export default {
     return {
       data,
       columns,
-    };
+      list: [{
+            "key": "0",
+            "treeId": "64136",
+            "conText": "起改为头需满需再以道清别问子节管。",
+            "rpotNum": 43,
+            "type": ["色情低俗 49", "政治敏感 49", "违法 17", "广告 50", "病毒木马 42", "其他 29"]
+        }]
+    }
   },
+  methods: {
+    async gettest() {
+      const { data } = await getListrpo2()
+      console.log(data)
+      let listCon = []
+      for(let [ky, val] of data.mus.entries()) {
+        let types = []
+        let vt = val.type
+        // let vt = JSON.stringify(JSON.parse(val.type)) 
+        for(let kyi in vt) {
+          if(vt[kyi]) {
+            types.push(kyi+' '+vt[kyi].toString())
+          }
+        }
+        // console.log(types)
+        listCon.push({
+          key: ky.toString(),
+          treeId: val.treeId,
+          conText: val.conText,
+          rpotNum: val.rpotNum,
+          type: types
+        })
+      }
+      console.log(listCon)
+      this.list = listCon
+    }
+  }
 };
 </script>
