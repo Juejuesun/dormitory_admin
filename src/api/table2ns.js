@@ -1,10 +1,20 @@
 import request from '@/utils/request2ns'
 
-export function getList2ns() {
+//获取用户列表
+export function getUserList() {
   return request({
-    url: '/searchs',
+    url: '/backStage/getUserStatus',
     method: 'post',
     // data,
+  })
+}
+
+//修改真实姓名和学号
+export function updateUserInfo(data) {
+  return request({
+    url: '/backStage/updateUserInfo',
+    method: 'post',
+    data,
   })
 }
 
