@@ -23,7 +23,7 @@
   </div>
 </template>
 <script>
-import { getListrpo2 } from '@/api/table2ns'
+import { getAllReported } from '@/api/table2ns'
 import { SmileOutlined, DownOutlined } from '@ant-design/icons-vue';
 const columns = [
   {
@@ -48,6 +48,11 @@ const columns = [
     key: 'type',
     dataIndex: 'type',
     slots: { customRender: 'tags' },
+  },
+  {
+    title: '发布时间',
+    dataIndex: 'publishTime',
+    key: 'publishTime',
   },
   {
     title: '操作',
@@ -98,31 +103,47 @@ export default {
         }]
     }
   },
+  created() {
+    this.gettest()
+  },
   methods: {
-    async gettest() {
-      const { data } = await getListrpo2()
-      console.log(data)
+    changedata(replist) { //封装列表
       let listCon = []
-      for(let [ky, val] of data.mus.entries()) {
+      let tycon = {
+        vulgar: '色情低俗',
+        sensitivity: '政治敏感',
+        illegal: '违法',
+        advertisement: '广告',
+        virus: '病毒木马',
+        others: '其他'
+      }
+      for(let [ky, val] of replist.entries()) {
         let types = []
         let vt = val.type
-        // let vt = JSON.stringify(JSON.parse(val.type)) 
-        for(let kyi in vt) {
+        for(let kyi in vt) {  //对type进行封装
           if(vt[kyi]) {
-            types.push(kyi+' '+vt[kyi].toString())
+            types.push(tycon[kyi]+' '+vt[kyi].toString())
           }
         }
-        // console.log(types)
+        console.log(types)
         listCon.push({
           key: ky.toString(),
-          treeId: val.treeId,
-          conText: val.conText,
-          rpotNum: val.rpotNum,
+          treeId: val.postIdOfReport,
+          conText: val.postContent,
+          rpotNum: val.reportTimes,
+          publishTime: val.publishTime,
           type: types
         })
       }
       console.log(listCon)
       this.list = listCon
+    },
+    async gettest() {
+      const { data } = await getAllReported()
+      console.log(data)
+      if(data.status == "succeed") {
+        this.changedata(data.posts)
+      }
     }
   }
 };

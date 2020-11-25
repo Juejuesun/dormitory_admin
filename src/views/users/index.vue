@@ -64,6 +64,10 @@ const columns = [
     slots: { customRender: 'userStudentNumber' },
   },
   {
+    title: '性别',
+    dataIndex: 'sex',
+  },
+  {
     title: '禁言状态',
     dataIndex: 'ifSilent'
   },

@@ -18,6 +18,24 @@ export function updateUserInfo(data) {
   })
 }
 
+//获取所有树洞
+export function getAllPosts() {
+  return request({
+    url: 'backStage/getAllPosts',
+    method: 'post',
+    // data,
+  })
+}
+
+//获取所有被举报的树洞
+export function getAllReported() {
+  return request({
+    url: '/backStage/getAllReported',
+    method: 'post',
+    // data,
+  })
+}
+
 export function getListrpo2() {
   return request({
     url: '/mus',

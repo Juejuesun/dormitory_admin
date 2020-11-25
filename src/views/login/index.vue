@@ -142,7 +142,7 @@
       height: 35px;
     }
     .ant-btn {
-      width: 365px;
+      width: 220px;
       height: 45px;
       border-radius: 99px;
     }
