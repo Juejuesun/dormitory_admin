@@ -38,11 +38,11 @@
         </div>
       </a-col>
     </a-row>
-    <div class="login-container-tips">
+    <!-- <div class="login-container-tips">
       基于vue{{ dependencies['vue'] }}
       + ant-design-vue
       {{ dependencies['ant-design-vue'] }}开发
-    </div>
+    </div> -->
   </div>
 </template>
 <script>
@@ -82,7 +82,7 @@
     },
     mounted() {
       this.form.username = 'admin'
-      this.form.password = '123456'
+      this.form.password = ''
       /*  setTimeout(() => {
         this.handleSubmit()
       }, 5000) */

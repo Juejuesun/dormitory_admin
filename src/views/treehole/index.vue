@@ -13,7 +13,7 @@
       </template>
     </a-table>
 
-    <a-button type="primary" @click="getlists">test</a-button>
+    <!-- <a-button type="primary" @click="getlists">test</a-button> -->
   </div>
 </template>
 <script>

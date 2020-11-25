@@ -22,7 +22,7 @@
         <a @click="canselrep(record)">取消举报</a>
       </template>
     </a-table>
-    <a-button type="primary" @click="gettest()">test</a-button>
+    <!-- <a-button type="primary" @click="gettest()">test</a-button> -->
   </div>
 </template>
 <script>
