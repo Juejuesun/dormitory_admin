@@ -18,6 +18,7 @@
 </template>
 <script>
 import { getAllPosts } from '@/api/table2ns'
+import { format } from '@/utils/datechange.js'
 
 const columns = [
   { title: 'ID', dataIndex: 'postId', key: 'postId', ellipsis: true },
@@ -48,6 +49,7 @@ export default {
       if(data.status == 'succeed') {
         for(let [ky, val] of data.posts.entries()) {
           val.key = ky.toString()
+          val.publishTime = format(val.publishTime)
         }
         this.posts = data.posts
       }

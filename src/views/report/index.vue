@@ -15,16 +15,22 @@
           </a-tag>
         </span>
       </template>
-      <template #action>
-        <a>通过</a>
+      <template #action="{ record }">
+        <a-button :loading="isloading" type="link" style="color: red;" @click="deletepost(record)">
+          删帖
+        </a-button>
+        <a @click="canselrep(record)">取消举报</a>
       </template>
     </a-table>
     <a-button type="primary" @click="gettest()">test</a-button>
   </div>
 </template>
 <script>
-import { getAllReported } from '@/api/table2ns'
+import { getAllReported, deletePost, reportedCancel } from '@/api/table2ns'
 import { SmileOutlined, DownOutlined } from '@ant-design/icons-vue';
+import { format } from '@/utils/datechange.js'
+import { message } from 'ant-design-vue'
+
 const columns = [
   {
     title: "ID",
@@ -61,30 +67,6 @@ const columns = [
   },
 ];
 
-const data = [
-  {
-    key: '1',
-    name: 'John Brown',
-    age: 32,
-    address: 'New York No. 1 Lake Park',
-    tags: ['nice', 'developer'],
-  },
-  {
-    key: '2',
-    name: 'Jim Green',
-    age: 42,
-    address: 'London No. 1 Lake Park',
-    tags: ['loser'],
-  },
-  {
-    key: '3',
-    name: 'Joe Black',
-    age: 32,
-    address: 'Sidney No. 1 Lake Park',
-    tags: ['cool', 'teacher'],
-  },
-];
-
 export default {
   components: {
     SmileOutlined,
@@ -92,15 +74,17 @@ export default {
   },
   data() {
     return {
-      data,
       columns,
-      list: [{
-            "key": "0",
-            "treeId": "64136",
-            "conText": "起改为头需满需再以道清别问子节管。",
-            "rpotNum": 43,
-            "type": ["色情低俗 49", "政治敏感 49", "违法 17", "广告 50", "病毒木马 42", "其他 29"]
-        }]
+      list: [
+        // {
+        //   "key": "0",
+        //   "treeId": "64136",
+        //   "conText": "起改为头需满需再以道清别问子节管。",
+        //   "rpotNum": 43,
+        //   "type": ["色情低俗 49", "政治敏感 49", "违法 17", "广告 50", "病毒木马 42", "其他 29"]
+        // }
+      ],
+      isloading: false
     }
   },
   created() {
@@ -126,12 +110,13 @@ export default {
           }
         }
         console.log(types)
+        let date = format(val.publishTime)
         listCon.push({
           key: ky.toString(),
           treeId: val.postIdOfReport,
           conText: val.postContent,
           rpotNum: val.reportTimes,
-          publishTime: val.publishTime,
+          publishTime: date,
           type: types
         })
       }
@@ -144,6 +129,30 @@ export default {
       if(data.status == "succeed") {
         this.changedata(data.posts)
       }
+    },
+    async deletepost(record) {
+      this.isloading = true
+      console.log(record)
+      const { data } = await deletePost({
+        postId: record.treeId
+      })
+      console.log(data)
+      if(data.status == 'wrong') {
+        message.info('请求失败')
+      }
+      this.gettest()
+      this.isloading = false
+    },
+    async canselrep(record) {
+      console.log(record)
+      const { data } = await reportedCancel({
+        postId: record.treeId
+      })
+      console.log(data)
+      if(data.status == 'wrong') {
+        message.info('请求失败')
+      }
+      this.gettest()
     }
   }
 };

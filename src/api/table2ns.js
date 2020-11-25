@@ -36,6 +36,42 @@ export function getAllReported() {
   })
 }
 
+//禁言用户
+export function silent(data) {
+  return request({
+    url: '/backStage/silent',
+    method: 'post',
+    data,
+  })
+}
+
+//解除禁言
+export function cancelSilent(data) {
+  return request({
+    url: '/backStage/cancelSilent',
+    method: 'post',
+    data,
+  })
+}
+
+//删帖
+export function deletePost(data) {
+  return request({
+    url: '/backStage/deletePost',
+    method: 'post',
+    data,
+  })
+}
+
+//取消举报状态
+export function reportedCancel(data) {
+  return request({
+    url: '/backStage/reportedCancel',
+    method: 'post',
+    data,
+  })
+}
+
 export function getListrpo2() {
   return request({
     url: '/mus',

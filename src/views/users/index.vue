@@ -1,7 +1,7 @@
 <template>
   <div>
     <a-table :columns="columns" :data-source="data" bordered>
-      <template v-for="col in ['userNickname', 'userRealname', 'userStudentNumber']" #[col]="{ text, record, index }" :key="col">
+      <template v-for="col in [ 'userRealname', 'userStudentNumber']" #[col]="{ text, record, index }" :key="col">
         <div :key="index">  
           <a-input
             v-if="record.editable"
@@ -14,7 +14,10 @@
           </template>
         </div>
       </template>
-      <template #operation="{ text, record, index }">
+      <template #ifSilent = "{ record, index }">
+        <a-switch v-model:checked="record.ifSilent" :loading="record.isload" @change="onChange(record, index)"/>
+      </template>
+      <template #operation="{ record }">
         <div class="editable-row-operations">
           <span v-if="record.editable">
             <a @click="save(record.key)">保存</a>
@@ -34,8 +37,10 @@
   </div>
 </template>
 <script>
-import { getUserList, updateUserInfo } from '@/api/table2ns'
+import { getUserList, updateUserInfo, silent, cancelSilent } from '@/api/table2ns'
 import { json } from 'body-parser';
+import { message } from 'ant-design-vue'
+
 const columns = [
   {
     title: 'ID',
@@ -45,7 +50,7 @@ const columns = [
   {
     title: '昵称',
     dataIndex: 'userNickname',
-    slots: { customRender: 'userNickname' },
+    // slots: { customRender: 'userNickname' },
   },
   // {
   //   title: '性别',
@@ -69,7 +74,8 @@ const columns = [
   },
   {
     title: '禁言状态',
-    dataIndex: 'ifSilent'
+    dataIndex: 'ifSilent',
+    slots: { customRender: 'ifSilent'}
   },
   {
     title: '操作',
@@ -94,7 +100,7 @@ export default {
     return {
       data,
       columns,
-      editingKey: '',
+      editingKey: ''
     };
   },
   created() {
@@ -124,27 +130,27 @@ export default {
       const target = newData.filter(item => key === item.key)[0]; //修改后数据
       const targetCache = newCacheData.filter(item => key === item.key)[0];//修改前的数据
       console.log(targetCache)
-      if (target && targetCache) {
-        delete target.editable;
-        this.data = newData;
-        Object.assign(targetCache, target);
-        // console.log(newCacheData)
-        let asc = {
-          userId: target.userId.toString(),
-          userRealName: target.userRealname.toString(),
-          userStudentNumber: target.userStudentNumber.toString()
-        }
-        console.log(asc)
-        const { data } = await updateUserInfo(asc)
-        console.log(data)
-        if(data.status == "succeed") {
+      let asc = {
+        userId: target.userId.toString(),
+        userRealName: target.userRealname.toString(),
+        userStudentNumber: target.userStudentNumber.toString()
+      }
+      console.log(asc)
+      const { data } = await updateUserInfo(asc)
+      console.log(data)
+      if(data.status == 'succeed') {
+        if (target && targetCache) {
+          delete target.editable;
+          this.data = newData;
+          Object.assign(targetCache, target);
           this.cacheData = newCacheData
-        } else {
           this.editingKey = '';
         }
-        
+      } else {
+        message.info('请求失败')
       }
-      this.editingKey = '';
+      this.editingKey = ''
+      this.cancel(key)//无奈出此下策
     },
     cancel(key) {
       const newData = [...this.data];
@@ -162,8 +168,34 @@ export default {
       // this.data = data.searchls
       for(let [ky, val] of data.entries() ) {
         val.key = ky.toString()
+        val.ifSilent = Boolean(val.ifSilent)
+        val.isload = false
       }
       this.data = data
+    },
+    async onChange(recoed, index) {
+      console.log(recoed, index)
+      this.data[index].isload = true
+      this.data[index].ifSilent = !this.data[index].ifSilent
+      let state = this.data[index].ifSilent
+      if(state) {
+        const { data } = await silent({userId: this.data[index].userId})
+        console.log(data)
+        if(data.status == 'wrong') {
+          message.info('请求失败')
+        }else {
+          message.info('操作成功');
+        }
+      }else {
+        const { data } = await cancelSilent({userId: this.data[index].userId})
+        console.log(data)
+        if(data.status == 'wrong') {
+          message.info('请求失败')
+        }else {
+          message.info('操作成功');
+        }
+      }
+      this.data[index].isload = false
     }
   },
 };
