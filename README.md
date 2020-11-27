@@ -3,6 +3,26 @@
 <br>
 <br>
 
+## 本地运行
+
+```shell
+# 克隆项目
+git clone -b master https://github.com/Juejuesun/dormitory_admin.git
+# 进入项目目录
+cd dormitory_admin
+# 安装依赖
+npm i
+# 本地开发 启动项目
+npm run serve
+```
+
+## 感谢作者
+`@author chuzhixin 1204505056@qq.com`<br>
+特别感谢[**vue-admin-beautifu**](https://github.com/chuzhixin/vue-admin-beautiful)的作者chuzhixin，为我们提供快速开发控制台的框架。<br>
+感兴趣的同学可以加群了解该项目
+> vue-admin-beautiful 前端讨论 QQ 群 972435319，1139183756 <br>
+> [https://github.com/chuzhixin/vue-admin-beautiful](https://github.com/chuzhixin/vue-admin-beautiful)
+
 ## 鸣谢
 
 | Project                                                              |
